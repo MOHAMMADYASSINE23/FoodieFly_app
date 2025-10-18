@@ -1,16 +1,17 @@
 import { Fragment } from "react";
 import { Text, TouchableOpacity, View, Image, Pressable, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import cn from 'clsx';
+import cn from 'classnames';
 
-/*import CartButton from "@/components/CartButton";
-import { useAuthStore } from "@/store/auth.store"; */
+//import CartButton from "@/components/CartButton";
+import useAuthStore from "@/store/auth.store"; 
 import { images, offers  } from "@/constants";
+import CartBotton from "@/components/CustomButton";
 
 export default function Index() {
   console.log('Index component rendered');
   console.log('offers:', offers);
-  /*const { user } = useAuthStore(); */
+  const { user } = useAuthStore(); 
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -51,7 +52,7 @@ export default function Index() {
                 <Image source={images.arrowDown} className="size-3" resizeMode="contain" />
               </TouchableOpacity>
             </View>
-    
+               <CartBotton />
           </View>
         )}
       />
