@@ -1,22 +1,11 @@
 "use client";
 import { FormEvent, useState } from "react";
-import { account, ID } from "@/lib/appwrite";
+import { supabase } from "@/lib/supabase";
 
 type Role = "customer" | "delivery";
 export default function AuthPage() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [role, setRole] = useState<Role>("customer");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setLoading(true); setMessage("");
-    const form = new FormData(event.currentTarget); const email = String(form.get("email")); const password = String(form.get("password"));
-    try {
-      if (mode === "signup") { await account.create({ userId: ID.unique(), email, password, name: String(form.get("name")) }); await account.createEmailPasswordSession({ email, password }); await account.updatePrefs({ role }); }
-      else { await account.createEmailPasswordSession({ email, password }); }
-      window.location.assign("/dashboard");
-    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not authenticate. Please try again."); }
-    finally { setLoading(false); }
-  }
+  const [mode, setMode] = useState<"signin" | "signup">("signin"); const [role, setRole] = useState<Role>("customer"); const [loading, setLoading] = useState(false); const [message, setMessage] = useState("");
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setLoading(true); setMessage(""); const form = new FormData(event.currentTarget); const email = String(form.get("email")); const password = String(form.get("password"));
+    try { if (mode === "signup") { const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: String(form.get("name")), role }, emailRedirectTo: `${window.location.origin}/dashboard` } }); if (error) throw error; setMessage("Account created. Check your email to confirm your account, then sign in."); setMode("signin"); } else { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; window.location.assign("/dashboard"); } } catch (error) { setMessage(error instanceof Error ? error.message : "Could not authenticate. Please try again."); } finally { setLoading(false); } }
   return <main className="authPage"><a className="brand" href="/"><i>F</i>oodieFly</a><section className="authCard"><p className="eyebrow">WELCOME TO FOODIEFLY</p><h1>{mode === "signin" ? "Welcome back." : "Create your account."}</h1><p className="authIntro">{mode === "signin" ? "Sign in to order food or manage your deliveries." : "Choose the account that matches how you use FoodieFly."}</p>{mode === "signup" && <div className="rolePicker"><button type="button" className={role === "customer" ? "chosen" : ""} onClick={() => setRole("customer")}><b>Customer</b><small>Order meals and track deliveries</small></button><button type="button" className={role === "delivery" ? "chosen" : ""} onClick={() => setRole("delivery")}><b>Delivery driver</b><small>Accept and manage delivery orders</small></button></div>}<form onSubmit={submit}>{mode === "signup" && <label>Full name<input required name="name" placeholder="Your full name" /></label>}<label>Email<input required type="email" name="email" placeholder="you@example.com" /></label><label>Password<input required minLength={8} type="password" name="password" placeholder="At least 8 characters" /></label>{message && <p className="authError">{message}</p>}<button className="primary authSubmit" disabled={loading}>{loading ? "Please wait..." : mode === "signin" ? "Sign in" : `Create ${role === "delivery" ? "driver" : "customer"} account`}</button></form><p className="switch">{mode === "signin" ? "New to FoodieFly?" : "Already have an account?"} <button onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setMessage(""); }}>{mode === "signin" ? "Create an account" : "Sign in"}</button></p></section></main>;
 }
