@@ -1,50 +1,42 @@
-# Welcome to your Expo app 👋
+# FoodieFly
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+FoodieFly is a local-delivery demo with two front ends:
 
-## Get started
+- **Mobile app:** Expo Router + React Native, with Appwrite configuration in the environment.
+- **Web app:** Next.js storefront in `website/`, with Supabase Auth and database-backed customer orders and delivery-driver dashboards.
 
-1. Install dependencies
+The demo storefront includes fictional restaurants, grocery stores, and lifestyle products. It is a portfolio project, not a live marketplace or payment processor.
 
-   ```bash
-   npm install
-   ```
+## Web app
 
-2. Start the app
+See [website/README.md](website/README.md) for setup, Supabase SQL, deployment, and security notes.
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Quick start:
 
 ```bash
-npm run reset-project
+cd website
+npm ci
+cp .env.example .env.local
+npm run dev
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Fill in your Supabase project URL and publishable key in `.env.local` before testing authentication and orders.
 
-## Learn more
+## Mobile app
 
-To learn more about developing your project with Expo, look at the following resources:
+Requirements: Node.js and Expo-compatible Android/iOS tooling.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm ci
+cp .env.example .env.local
+npx expo start
+```
 
-## Join the community
+Set your own Appwrite project ID and endpoint in `.env.local`. Public project identifiers are configuration, not secrets; never place server API keys or admin credentials in `EXPO_PUBLIC_*` variables.
 
-Join our community of developers creating universal apps.
+## Security notes
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Public sign-up creates customer accounts only. Delivery-driver roles must be assigned by a trusted administrator.
+- The web app's Supabase policies and triggers are documented in `website/supabase/`.
+- Demo product prices are client-side sample data. Do not process real payments until a trusted server-side catalog and checkout flow are implemented.
+- Use test credentials and a non-production Supabase project while validating order flows.

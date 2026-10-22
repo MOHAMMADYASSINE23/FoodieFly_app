@@ -1,0 +1,98 @@
+name: Website Quality Checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "website/**"
+      - ".env"
+      - ".env.example"
+      - ".gitignore"
+      - "README.md"
+      - ".github/workflows/website-quality.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "website/**"
+      - ".env"
+      - ".env.example"
+      - ".gitignore"
+      - "README.md"
+      - ".github/workflows/website-quality.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: website
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-placeholder-key
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Report full dependency audit
+        run: |
+          npm audit --json > npm-audit.json || true
+          node -e 'const a = require("./npm-audit.json"); console.log("Full dependency audit:", JSON.stringify(a.metadata?.vulnerabilities || a.error || {}, null, 2))'
+      - name: Audit production dependencies
+        run: npm audit --omit=dev
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+
+  database-security:
+    name: Supabase SQL security tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: foodiefly
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d foodiefly"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: foodiefly
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Apply SQL and run security assertions
+        run: |
+          psql -v ON_ERROR_STOP=1 \
+            -f website/supabase/tests/setup.sql \
+            -f website/supabase/schema.sql \
+            -f website/supabase/orders.sql \
+            -f website/supabase/security-hardening.sql \
+            -f website/supabase/tests/security.sql
