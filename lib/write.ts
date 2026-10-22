@@ -46,11 +46,10 @@ export const createUser = async ({ email, password, name }: CreateUserParams) =>
             { name, email, accountId: newAccount.$id, avatar: avatarUrl }
         );
     } catch (error) {
-        throw new Error(error as string);
+        throw new Error(error instanceof Error ? error.message : 'Account creation failed');
     }
 };
 export const signIn = async ({ email, password }: SignInParams) => {
-    console.log('signIn called with:', { email, password });
     try {
         
         try {
@@ -68,7 +67,6 @@ export const signIn = async ({ email, password }: SignInParams) => {
 export const getCurrentUser = async () => {
     try {
         const currentAccount = await account.get();
-        console.log('currentAccount:', currentAccount);
         if (!currentAccount) throw new Error('No current account');
 
         const currentUser = await database.listDocuments(
@@ -76,13 +74,11 @@ export const getCurrentUser = async () => {
             appwriteConfig.usersCollectionId,
             [Query.equal('accountId', currentAccount.$id)]
         );
-        console.log('currentUser:', currentUser);
 
         if (!currentUser || !currentUser.documents || currentUser.documents.length === 0) throw new Error('No user found');
 
         return currentUser.documents[0];
     } catch (error) {
-        console.log('getCurrentUser error:', error);
         throw new Error(error as string);
     }
 };
