@@ -57,6 +57,10 @@ npm run build
 npm audit --omit=dev
 ```
 
+## Security audit status
+
+The CI production-dependency audit is expected to block any vulnerable runtime dependency. The full dependency audit may still report five high-severity findings in the development/lint chain (`braces` through `micromatch`, `fast-glob`, and the Next.js ESLint configuration). npm's forced remediation downgrades `eslint-config-next` to a different major version, so do not apply it blindly; track this separately for a compatible tooling migration.
+
 ## Demo limitations
 
 - Store names, products, and prices are fictional client-side data.
