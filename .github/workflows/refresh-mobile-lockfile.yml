@@ -1,0 +1,35 @@
+name: Temporary mobile lockfile refresh
+
+on:
+  push:
+    branches: [security/mobile-logging-and-ci]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lockfile:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Apply non-breaking dependency audit fixes
+        run: npm audit fix --package-lock-only --ignore-scripts || true
+      - name: Commit updated lockfile if changed
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "No safe lockfile updates were available."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "security: refresh mobile dependency lockfile"
+          git push
