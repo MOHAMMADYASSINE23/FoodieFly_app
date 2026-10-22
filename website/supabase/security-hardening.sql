@@ -67,6 +67,12 @@ create policy "Customers create their own pending orders"
     and total = 0
   );
 
+drop policy if exists "Customers cancel their own pending orders" on public.orders;
+create policy "Customers cancel their own pending orders"
+  on public.orders for delete
+  using ((select auth.uid()) = customer_id and status = 'pending');
+grant delete on public.orders to authenticated;
+
 drop policy if exists "Drivers accept and update their orders" on public.orders;
 create policy "Drivers accept and update their orders"
   on public.orders for update
