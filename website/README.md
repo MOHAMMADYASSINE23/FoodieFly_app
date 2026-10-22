@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FoodieFly Web
 
-## Getting Started
+A responsive local-storefront demo built with Next.js, React, TypeScript, and Supabase. It includes a customer checkout flow and a separate delivery-driver dashboard.
 
-First, run the development server:
+## Features
+
+- Browse demo restaurant, grocery, and lifestyle products.
+- Add products to a cart, enter delivery details, and optionally attach browser geolocation.
+- Create customer accounts and sign in with Supabase Auth.
+- Persist orders and order items in Supabase.
+- View customer order history and update delivery status from a driver dashboard.
+- Enforce account roles, order ownership, and delivery status transitions in database policies/triggers.
+
+## Local development
+
+From this directory:
 
 ```bash
+npm ci
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set these variables in `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Do not add a Supabase service-role key to browser code or any `NEXT_PUBLIC_*` variable.
 
-## Learn More
+## Supabase setup
 
-To learn more about Next.js, take a look at the following resources:
+For a new test project, run these scripts in order in the Supabase SQL Editor:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. `supabase/schema.sql`
+2. `supabase/orders.sql`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For an existing database created with the earlier demo SQL, review the existing delivery accounts, then run `supabase/security-hardening.sql`. It prevents users from assigning themselves the delivery role, limits profile/order update permissions, recalculates order totals from line items, and enforces the delivery status sequence.
 
-## Deploy on Vercel
+After setup, create a normal customer account. To approve a delivery driver, verify the person's identity first, then promote the account from a trusted administrator context using its real profile UUID:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sql
+UPDATE public.profiles
+SET role = 'delivery'
+WHERE id = 'replace-with-verified-profile-uuid';
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Never expose administrator credentials to the browser. Before applying the hardening migration to an existing project, review current rows with `role = 'delivery'` so unexpected privileged accounts can be investigated.
+
+## Quality checks
+
+```bash
+npm ci
+npm run typecheck
+npm run lint
+npm run build
+npm audit --omit=dev
+```
+
+## Demo limitations
+
+- Store names, products, and prices are fictional client-side data.
+- The database recalculates order totals from stored line items, but the line-item unit prices still originate from the browser. Do not take real payments until a trusted database-backed product catalog and server-validated checkout are implemented.
+- No payment gateway is connected.
+- Delivery updates are polling-based, not real-time subscriptions.
+- Use a non-production Supabase project for testing.
