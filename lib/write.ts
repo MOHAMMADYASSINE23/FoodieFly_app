@@ -54,8 +54,8 @@ export const signIn = async ({ email, password }: SignInParams) => {
         
         try {
             await account.deleteSession('current');
-        } catch (deleteError) {
-           
+        } catch {
+          // No current session is expected for a fresh sign-in.
         }
 
         const session = await account.createEmailPasswordSession(email, password);
