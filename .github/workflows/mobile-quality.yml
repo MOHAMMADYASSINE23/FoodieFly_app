@@ -58,8 +58,12 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
-      - name: Audit production dependencies
-        run: npm audit --omit=dev
+      - name: Report dependency audit findings
+        run: |
+          npm audit --json > npm-audit.json || true
+          node -e 'const a = require("./npm-audit.json"); console.log("Full dependency audit:", JSON.stringify(a.metadata?.vulnerabilities || a.error || {}, null, 2))'
+          npm audit --omit=dev --json > npm-audit-production.json || true
+          node -e 'const a = require("./npm-audit-production.json"); console.log("Production dependency audit:", JSON.stringify(a.metadata?.vulnerabilities || a.error || {}, null, 2))'
       - name: Typecheck
         run: npm run typecheck
       - name: Lint
