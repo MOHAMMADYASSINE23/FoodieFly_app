@@ -52,6 +52,12 @@ create policy "Customers create their own pending orders"
     and total = 0
   );
 
+create policy "Customers cancel their own pending orders"
+  on public.orders for delete
+  using ((select auth.uid()) = customer_id and status = 'pending');
+
+grant delete on public.orders to authenticated;
+
 create policy "Customers view their own orders"
   on public.orders for select
   using ((select auth.uid()) = customer_id);
