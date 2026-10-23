@@ -23,9 +23,8 @@ export default function RootLayout() {
   }, [fontsLoaded, error]);
 
   useEffect(() => {
-      console.log('fetchAuthenticatedUser effect triggered');
       fetchAuthenticatedUser();
-  }, []);
+  }, [fetchAuthenticatedUser]);
 
   console.log('RootLayout render - isAuthenticated:', isAuthenticated);
 
