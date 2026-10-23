@@ -1,5 +1,5 @@
 import { ID } from "react-native-appwrite";
-import { appwriteConfig, databases, storage } from "./write";
+import { appwriteConfig, database as databases, storage } from "./write";
 import dummyData from "./data";
 
 interface Category {

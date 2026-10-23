@@ -6,7 +6,7 @@ import useAuthStore from "@/store/auth.store";
 // import './globals.css';
 
 export default function RootLayout() {
-    const { fetchAuthenticatedUser, isAuthenticated } = useAuthStore();
+    const { fetchAuthenticatedUser } = useAuthStore();
 
     const [fontsLoaded, error] = useFonts({
      "QuickSand-Bold": require('../assets/fonts/Quicksand-Bold.ttf'),
@@ -23,11 +23,9 @@ export default function RootLayout() {
   }, [fontsLoaded, error]);
 
   useEffect(() => {
-      console.log('fetchAuthenticatedUser effect triggered');
       fetchAuthenticatedUser();
-  }, []);
+  }, [fetchAuthenticatedUser]);
 
-  console.log('RootLayout render - isAuthenticated:', isAuthenticated);
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }

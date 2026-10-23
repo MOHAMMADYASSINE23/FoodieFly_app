@@ -1,11 +1,12 @@
 import {Account, Avatars, Client, Databases, ID, Query, Storage} from "react-native-appwrite";
-import {CreateUserParams, GetMenuParams, SignInParams} from "@/type";
+import type { Category, CreateUserParams, GetMenuParams, MenuItem, SignInParams } from "@/type";
 
 export const appwriteConfig = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
     projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
     platform: "com.Mohammad.foodiefly",
     databaseId: '68d357e3002364c0202d',
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID ?? '',
     usersCollectionId: 'user',
     categoriesCollectionId: 'c1a2t3e4g5o6r7i9es',
     menuCollectionId: 'm1e2n3u4',
@@ -46,17 +47,16 @@ export const createUser = async ({ email, password, name }: CreateUserParams) =>
             { name, email, accountId: newAccount.$id, avatar: avatarUrl }
         );
     } catch (error) {
-        throw new Error(error as string);
+        throw new Error(error instanceof Error ? error.message : 'Account creation failed');
     }
 };
 export const signIn = async ({ email, password }: SignInParams) => {
-    console.log('signIn called with:', { email, password });
     try {
         
         try {
             await account.deleteSession('current');
-        } catch (deleteError) {
-           
+        } catch {
+          // No current session is expected for a fresh sign-in.
         }
 
         const session = await account.createEmailPasswordSession(email, password);
@@ -68,7 +68,6 @@ export const signIn = async ({ email, password }: SignInParams) => {
 export const getCurrentUser = async () => {
     try {
         const currentAccount = await account.get();
-        console.log('currentAccount:', currentAccount);
         if (!currentAccount) throw new Error('No current account');
 
         const currentUser = await database.listDocuments(
@@ -76,13 +75,11 @@ export const getCurrentUser = async () => {
             appwriteConfig.usersCollectionId,
             [Query.equal('accountId', currentAccount.$id)]
         );
-        console.log('currentUser:', currentUser);
 
         if (!currentUser || !currentUser.documents || currentUser.documents.length === 0) throw new Error('No user found');
 
         return currentUser.documents[0];
     } catch (error) {
-        console.log('getCurrentUser error:', error);
         throw new Error(error as string);
     }
 };
@@ -95,7 +92,7 @@ export const getMenu = async ({ category, query }: GetMenuParams) => {
         if (query) {
             queries.push(Query.search('name', query));
         }
-        const menu = await database.listDocuments(
+        const menu = await database.listDocuments<MenuItem>(
             appwriteConfig.databaseId,
             appwriteConfig.menuCollectionId,
             queries
@@ -108,7 +105,7 @@ export const getMenu = async ({ category, query }: GetMenuParams) => {
 
 export const getCategories = async () => {
     try {
-        const categories = await database.listDocuments(
+        const categories = await database.listDocuments<Category>(
             appwriteConfig.databaseId,
             appwriteConfig.categoriesCollectionId
         );

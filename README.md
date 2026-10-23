@@ -40,3 +40,4 @@ Set your own Appwrite project ID and endpoint in `.env.local`. Public project id
 - The web app's Supabase policies and triggers are documented in `website/supabase/`.
 - Demo product prices are client-side sample data. Do not process real payments until a trusted server-side catalog and checkout flow are implemented.
 - Use test credentials and a non-production Supabase project while validating order flows.
+- The Expo mobile dependency audit currently reports 34 findings in the npm production dependency tree (27 high, 7 moderate, 0 critical). Safe lockfile updates patched some transitive packages, but remaining findings in the Expo/React Native dependency chain need a separately tested SDK/toolchain upgrade. Mobile CI reports these findings without treating the audit as clean; do not treat this as a resolved security issue.

@@ -1,7 +1,6 @@
-import { View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React from 'react'
 import {CustomButtonProps} from "@/type";
-import cn from "classnames";
 
 const CustomButton: React.FC<CustomButtonProps> = ({
   onPress,
