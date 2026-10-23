@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Dimensions, Platform, ScrollView, ImageBackground, Image } from 'react-native'
+import { View, KeyboardAvoidingView, Dimensions, Platform, ScrollView, ImageBackground, Image } from 'react-native'
 import { Slot, Redirect } from 'expo-router'
 import { images } from '@/constants';
 import useAuthStore from '@/store/auth.store';
