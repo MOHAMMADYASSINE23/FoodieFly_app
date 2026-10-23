@@ -10,7 +10,6 @@ import MenuCard from "@/components/MenuCard";
 import SearchBar from "@/components/SearchBar";
 import { getCategories, getMenu } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
-import type { Category } from "@/type";
 
 export default function Search() {
   const searchParams = useLocalSearchParams<{
