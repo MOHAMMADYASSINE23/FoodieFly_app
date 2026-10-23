@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import type { ImageSourcePropType, StyleProp, TextStyle, ViewStyle } from "react-native";
 import { Models } from "react-native-appwrite";
 
 export interface MenuItem extends Models.Document {
@@ -49,7 +51,7 @@ export interface CartStore {
     getTotalPrice: () => number;
 }
 
-interface TabBarIconProps {
+export interface TabBarIconProps {
     focused: boolean;
     icon: ImageSourcePropType;
     title: string;
@@ -62,20 +64,20 @@ interface PaymentInfoStripeProps {
     valueStyle?: string;
 }
 
-interface CustomButtonProps {
+export interface CustomButtonProps {
     onPress?: () => void;
     title?: string;
-    style?: string;
-    leftIcon?: React.ReactNode;
-    textStyle?: string;
+    style?: StyleProp<ViewStyle>;
+    leftIcon?: ReactNode;
+    textStyle?: StyleProp<TextStyle>;
     isLoading?: boolean;
 }
 
-interface CustomHeaderProps {
+export interface CustomHeaderProps {
     title?: string;
 }
 
-interface CustomInputProps {
+export interface CustomInputProps {
     placeholder?: string;
     value?: string;
     onChangeText?: (text: string) => void;
@@ -84,24 +86,24 @@ interface CustomInputProps {
     keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
 }
 
-interface ProfileFieldProps {
+export interface ProfileFieldProps {
     label: string;
     value: string;
     icon: ImageSourcePropType;
 }
 
-interface CreateUserParams {
+export interface CreateUserParams {
     email: string;
     password: string;
     name: string;
 }
 
-interface SignInParams {
+export interface SignInParams {
     email: string;
     password: string;
 }
 
-interface GetMenuParams {
+export interface GetMenuParams {
     category: string;
     query: string;
 }
