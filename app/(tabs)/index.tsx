@@ -3,15 +3,12 @@ import { Text, TouchableOpacity, View, Image, Pressable, FlatList } from "react-
 import { SafeAreaView } from "react-native-safe-area-context";
 import cn from 'classnames';
 
-//import CartButton from "@/components/CartButton";
+import CartButton from "@/components/CartButton";
 import useAuthStore from "@/store/auth.store"; 
 import { images, offers  } from "@/constants";
-import CartBotton from "@/components/CustomButton";
+
 
 export default function Index() {
-  console.log('Index component rendered');
-  console.log('offers:', offers);
-  const { user } = useAuthStore(); 
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -19,7 +16,6 @@ export default function Index() {
         data={offers}
         renderItem={({ item, index}) => {
           const isEven = index % 2 === 0;
-          console.log('renderItem called with item:', item, 'index:', index);
           return (
             <View>
               <Pressable className={cn("offer-card", isEven ? 'flex-row-reverse' : 'flex-row')}
@@ -52,7 +48,7 @@ export default function Index() {
                 <Image source={images.arrowDown} className="size-3" resizeMode="contain" />
               </TouchableOpacity>
             </View>
-               <CartBotton />
+               <CartButton />
           </View>
         )}
       />
