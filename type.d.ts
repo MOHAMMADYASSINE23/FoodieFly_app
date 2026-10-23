@@ -107,8 +107,3 @@ export interface GetMenuParams {
     category: string;
     query: string;
 }
-
-declare module "*.png";
-declare module "*.jpg";
-declare module "*.jpeg";
-declare module "*.webp";
