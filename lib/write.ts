@@ -1,5 +1,5 @@
 import {Account, Avatars, Client, Databases, ID, Query, Storage} from "react-native-appwrite";
-import {CreateUserParams, GetMenuParams, SignInParams} from "@/type";
+import type { Category, CreateUserParams, GetMenuParams, MenuItem, SignInParams } from "@/type";
 
 export const appwriteConfig = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
@@ -92,7 +92,7 @@ export const getMenu = async ({ category, query }: GetMenuParams) => {
         if (query) {
             queries.push(Query.search('name', query));
         }
-        const menu = await database.listDocuments(
+        const menu = await database.listDocuments<MenuItem>(
             appwriteConfig.databaseId,
             appwriteConfig.menuCollectionId,
             queries
@@ -105,7 +105,7 @@ export const getMenu = async ({ category, query }: GetMenuParams) => {
 
 export const getCategories = async () => {
     try {
-        const categories = await database.listDocuments(
+        const categories = await database.listDocuments<Category>(
             appwriteConfig.databaseId,
             appwriteConfig.categoriesCollectionId
         );
