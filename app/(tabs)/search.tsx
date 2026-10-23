@@ -24,7 +24,7 @@ export default function Search() {
   const menuParams = useMemo(() => ({ category, query }), [category, query]);
   const { data, loading } = useAppwrite({ fn: getMenu, params: menuParams });
   const { data: categories } = useAppwrite({ fn: getCategories });
-  const menuItems = (data ?? []) as MenuItem[];
+  const menuItems = (data ?? []) as unknown as MenuItem[];
 
   return (
     <SafeAreaView className="h-full bg-white">
@@ -59,7 +59,7 @@ export default function Search() {
               <CartButton />
             </View>
             <SearchBar />
-            <Filter categories={(categories ?? []) as Category[]} />
+            <Filter categories={(categories ?? []) as unknown as Category[]} />
           </View>
         }
         ListEmptyComponent={
