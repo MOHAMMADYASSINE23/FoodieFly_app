@@ -1,0 +1,46 @@
+name: Temporary Expo SDK lockfile refresh
+
+on:
+  push:
+    branches: [security/expo-sdk-55-upgrade]
+    paths:
+      - "package.json"
+      - ".github/workflows/refresh-expo-lockfile.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-expo-dependencies:
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install initial dependency graph
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Align Expo packages with SDK 55
+        run: npx expo install --fix
+      - name: Refresh lockfile
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Validate Expo SDK compatibility
+        run: npx expo-doctor
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Commit dependency updates
+        run: |
+          if git diff --quiet -- package.json package-lock.json; then
+            echo "Expo SDK dependency graph is already aligned."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "security: align Expo SDK 55 dependencies"
+          git push
