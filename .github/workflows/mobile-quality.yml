@@ -49,7 +49,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Typecheck and lint mobile app
+    name: Typecheck, lint, Expo Doctor, and web export
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -58,17 +58,27 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Report dependency audit findings
         run: |
-          npm audit --json > npm-audit.json || true
+          timeout 90s npm audit --json > npm-audit.json || true
+          if ! node -e 'JSON.parse(require("fs").readFileSync("npm-audit.json", "utf8"))' 2>/dev/null; then
+            echo '{"error":"npm audit did not return valid JSON (possible timeout)"}' > npm-audit.json
+          fi
           node -e 'const a = require("./npm-audit.json"); console.log("Full dependency audit:", JSON.stringify(a.metadata?.vulnerabilities || a.error || {}, null, 2))'
-          npm audit --omit=dev --json > npm-audit-production.json || true
+          timeout 90s npm audit --omit=dev --json > npm-audit-production.json || true
+          if ! node -e 'JSON.parse(require("fs").readFileSync("npm-audit-production.json", "utf8"))' 2>/dev/null; then
+            echo '{"error":"production npm audit did not return valid JSON (possible timeout)"}' > npm-audit-production.json
+          fi
           node -e 'const a = require("./npm-audit-production.json"); console.log("Production dependency audit:", JSON.stringify(a.metadata?.vulnerabilities || a.error || {}, null, 2))'
+      - name: Validate Expo config and native dependencies
+        run: npx expo-doctor@1.20.4
       - name: Typecheck
         run: npm run typecheck
       - name: Lint
         run: npm run lint
+      - name: Export web app
+        run: npx expo export --platform web
