@@ -52,7 +52,7 @@
     "eslint": "^9.25.0",
     "eslint-config-expo": "~55.0.1",
     "typescript": "~5.9.2",
-    "babel-preset-expo": "~55.0.0"
+    "babel-preset-expo": "~55.0.1"
   },
   "private": true,
   "overrides": {
