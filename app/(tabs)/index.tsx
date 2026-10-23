@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import cn from 'classnames';
 
 import CartButton from "@/components/CartButton";
-import useAuthStore from "@/store/auth.store"; 
 import { images, offers  } from "@/constants";
 
 
