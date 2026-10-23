@@ -1,0 +1,59 @@
+name: Temporary Expo SDK 54 dependency refresh
+
+on:
+  push:
+    branches: [security/expo-sdk54-dependency-refresh]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/refresh-expo-dependencies.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: expo-sdk54-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh-and-validate:
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install the current locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Align Expo packages with the installed SDK
+        run: npx expo install --fix
+      - name: Apply non-breaking npm security fixes
+        run: npm audit fix --ignore-scripts --no-fund || true
+      - name: Refresh the lockfile
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Report dependency audit
+        run: |
+          npm audit --json > npm-audit.json || true
+          node -e 'const a = require("./npm-audit.json"); console.log("Dependency audit:", JSON.stringify(a.metadata?.vulnerabilities || a.error || {}, null, 2)); console.log("Findings:", JSON.stringify(Object.entries(a.vulnerabilities || {}).map(([name, v]) => ({name, severity: v.severity, isDirect: v.isDirect, fixAvailable: v.fixAvailable})), null, 2))'
+      - name: Validate Expo SDK compatibility
+        run: npx expo-doctor
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Commit validated dependency updates
+        run: |
+          if git diff --quiet -- package.json package-lock.json; then
+            echo "No dependency changes were needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "security: refresh Expo SDK 54 dependencies"
+          git push
