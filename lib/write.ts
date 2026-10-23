@@ -6,6 +6,7 @@ export const appwriteConfig = {
     projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
     platform: "com.Mohammad.foodiefly",
     databaseId: '68d357e3002364c0202d',
+    bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID ?? '',
     usersCollectionId: 'user',
     categoriesCollectionId: 'c1a2t3e4g5o6r7i9es',
     menuCollectionId: 'm1e2n3u4',
