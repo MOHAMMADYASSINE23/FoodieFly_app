@@ -60,6 +60,11 @@
     "@expo/cli": {
       "@expo/code-signing-certificates": "0.0.7"
     },
-    "brace-expansion@^1.1.7": "1.1.21"
+    "minimatch@3.1.5": {
+      "brace-expansion": "1.1.21"
+    },
+    "minimatch@10.2.6": {
+      "brace-expansion": "5.0.12"
+    }
   }
 }
