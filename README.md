@@ -34,6 +34,8 @@ npx expo start
 
 Set your own Appwrite project ID and endpoint in `.env.local`. Public project identifiers are configuration, not secrets; never place server API keys or admin credentials in `EXPO_PUBLIC_*` variables.
 
+Before release, follow the [mobile device smoke-test checklist](docs/MOBILE_DEVICE_SMOKE_TEST.md) for real-device Appwrite validation.
+
 ## Security notes
 
 - Public sign-up creates customer accounts only. Delivery-driver roles must be assigned by a trusted administrator.
