@@ -1,6 +1,19 @@
 import {Account, Avatars, Client, Databases, ID, Query, Storage} from "react-native-appwrite";
 import type { Category, CreateUserParams, GetMenuParams, MenuItem, SignInParams } from "@/type";
 
+const getErrorMessage = (error: unknown, fallback: string): string => {
+    if (error instanceof Error && error.message) return error.message;
+    if (
+        typeof error === "object" &&
+        error !== null &&
+        "message" in error &&
+        typeof error.message === "string"
+    ) {
+        return error.message;
+    }
+    return fallback;
+};
+
 export const appwriteConfig = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
     projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
@@ -47,7 +60,7 @@ export const createUser = async ({ email, password, name }: CreateUserParams) =>
             { name, email, accountId: newAccount.$id, avatar: avatarUrl }
         );
     } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Account creation failed');
+        throw new Error(getErrorMessage(error, 'Account creation failed'));
     }
 };
 export const signIn = async ({ email, password }: SignInParams) => {
@@ -62,7 +75,7 @@ export const signIn = async ({ email, password }: SignInParams) => {
         const session = await account.createEmailPasswordSession(email, password);
         return session;
     } catch (error) {
-        throw new Error(error as string);
+        throw new Error(getErrorMessage(error, 'Sign-in failed'));
     }
 };
 export const getCurrentUser = async () => {
@@ -80,7 +93,7 @@ export const getCurrentUser = async () => {
 
         return currentUser.documents[0];
     } catch (error) {
-        throw new Error(error as string);
+        throw new Error(getErrorMessage(error, 'Could not load current user'));
     }
 };
 export const getMenu = async ({ category, query }: GetMenuParams) => {
@@ -99,7 +112,7 @@ export const getMenu = async ({ category, query }: GetMenuParams) => {
         );
         return menu.documents;
     } catch (error) {
-        throw new Error(error as string);
+        throw new Error(getErrorMessage(error, 'Could not load menu'));
     }    
 };
 
@@ -111,6 +124,6 @@ export const getCategories = async () => {
         );
         return categories.documents;
     } catch (error) {
-        throw new Error(error as string);
+        throw new Error(getErrorMessage(error, 'Could not load categories'));
     }
 };

@@ -28,7 +28,7 @@ const CustomInput = ({
                 onBlur={() => setIsFocused(false)}
                 placeholder={placeholder}
                 placeholderTextColor="#888"
-                style={{ borderWidth: 1, borderColor: isFocused ? '#primary' : '#gray-300', padding: 10, borderRadius: 5 }}
+                style={{ borderWidth: 1, borderColor: isFocused ? '#FE8C00' : '#D1D5DB', padding: 10, borderRadius: 5 }}
             />
         </View>
     )
