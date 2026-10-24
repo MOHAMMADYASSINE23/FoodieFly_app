@@ -33,4 +33,4 @@ Run this checklist on a real Android device and, if available, a real iPhone aft
 
 For each failed step, capture the device/OS, screen, exact steps, expected behavior, actual behavior, and sanitized error text. Do not include passwords, session cookies, API keys, or real customer information.
 
-**Release gate:** do not call the mobile app production-ready solely because CI passes. The current dependency audit still reports 9 findings (4 high, 5 moderate, 0 critical), including the unpatched `node-forge@1.4.0` issue in Expo's CLI/code-signing toolchain. Review the current [README security notes](../README.md) before any production deployment.
+**Release gate:** do not call the mobile app production-ready solely because CI passes. The latest full-tree `npm audit` reports 9 findings (4 high, 5 moderate, 0 critical), mainly in Expo's CLI/code-signing toolchain and NativeWind-related tooling. The latest production-only `npm audit --omit=dev` reports 0 vulnerabilities, but the full toolchain findings still need review and the app still needs real-device validation. Review the current [README security notes](../README.md) before any production deployment.
