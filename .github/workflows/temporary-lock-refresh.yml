@@ -26,8 +26,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Refresh lockfile for security overrides
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Rebuild lockfile for security overrides
+        run: |
+          rm -f package-lock.json
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
       - name: Commit lockfile if changed
         run: |
           if git diff --quiet -- package-lock.json; then
