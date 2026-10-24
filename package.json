@@ -60,7 +60,6 @@
     "@expo/cli": {
       "@expo/code-signing-certificates": "0.0.7"
     },
-    "decode-uri-component": "0.4.3",
     "postcss-nested": "6.2.1",
     "query-string": "9.5.1",
     "react-native-css-interop": {
