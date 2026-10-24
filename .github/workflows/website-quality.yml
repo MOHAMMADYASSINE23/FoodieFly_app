@@ -39,11 +39,11 @@ jobs:
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-placeholder-key
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: website/package-lock.json
       - name: Install dependencies
@@ -87,7 +87,7 @@ jobs:
       PGDATABASE: foodiefly
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Apply SQL and run security assertions
         run: |
           psql -v ON_ERROR_STOP=1 \
