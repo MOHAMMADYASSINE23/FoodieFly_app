@@ -68,7 +68,7 @@ jobs:
           if ! node -e 'JSON.parse(require("fs").readFileSync("npm-audit.json", "utf8"))' 2>/dev/null; then
             echo '{"error":"npm audit did not return valid JSON (possible timeout)"}' > npm-audit.json
           fi
-          node -e 'const a = require("./npm-audit.json"); console.log("Full dependency audit:", JSON.stringify(a.metadata?.vulnerabilities || a.error || {}, null, 2))'
+          node -e 'const a = require("./npm-audit.json"); const v = a.metadata?.vulnerabilities; const findings = Object.entries(a.vulnerabilities || {}).map(([name, item]) => ({name, severity:item.severity, isDirect:item.isDirect, range:item.range, fixAvailable:item.fixAvailable, via:item.via.map(x => typeof x === "string" ? x : ({title:x.title, url:x.url, range:x.range}))})); console.log("Full dependency audit:", JSON.stringify({summary:v || a.error || {}, findings}, null, 2))'
           timeout 90s npm audit --omit=dev --json > npm-audit-production.json || true
           if ! node -e 'JSON.parse(require("fs").readFileSync("npm-audit-production.json", "utf8"))' 2>/dev/null; then
             echo '{"error":"production npm audit did not return valid JSON (possible timeout)"}' > npm-audit-production.json
