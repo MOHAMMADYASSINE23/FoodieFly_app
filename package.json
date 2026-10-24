@@ -59,6 +59,11 @@
     "expo-file-system": "~55.0.26",
     "@expo/cli": {
       "@expo/code-signing-certificates": "0.0.7"
-    }
+    },
+    "query-string": "9.5.1",
+    "react-native-css-interop": {
+      "postcss-selector-parser": "6.1.5"
+    },
+    "zod": "4.6.7"
   }
 }
