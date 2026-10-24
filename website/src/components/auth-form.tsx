@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 type Role = "customer" | "delivery";
@@ -21,6 +22,7 @@ function safeLocalPath(value: string | null): string | null {
 }
 
 export default function AuthForm({ initialRole, returnTo }: { initialRole: Role; returnTo: string }) {
+  const router = useRouter();
   const [mode, setMode] = useState<AuthMode>("signin");
   const [role, setRole] = useState<Role>(initialRole);
   const [loading, setLoading] = useState(false);
@@ -52,7 +54,7 @@ export default function AuthForm({ initialRole, returnTo }: { initialRole: Role;
         if (error) throw error;
 
         if (data.session) {
-          window.location.assign("/dashboard/customer");
+          router.push("/dashboard/customer");
           return;
         }
 
@@ -86,7 +88,7 @@ export default function AuthForm({ initialRole, returnTo }: { initialRole: Role;
 
         const roleHome = role === "delivery" ? "/dashboard/delivery" : "/dashboard/customer";
         const destination = role === "customer" ? safeLocalPath(returnTo) ?? roleHome : roleHome;
-        window.location.assign(destination);
+        router.push(destination);
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not authenticate. Please try again.");
