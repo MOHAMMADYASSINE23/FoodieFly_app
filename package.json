@@ -56,6 +56,12 @@
   },
   "private": true,
   "overrides": {
-    "expo-file-system": "~55.0.26"
+    "expo-file-system": "~55.0.26",
+    "minimatch": {
+      "brace-expansion": "1.1.21"
+    },
+    "@expo/cli": {
+      "@expo/code-signing-certificates": "0.0.7"
+    }
   }
 }
