@@ -24,7 +24,7 @@ Fill in your Supabase project URL and publishable key in `.env.local` before tes
 
 ## Mobile app
 
-Requirements: Node.js and Expo-compatible Android/iOS tooling.
+Requirements: Node.js 20.19+ or 22.13+, plus Expo-compatible Android/iOS tooling. The mobile app targets Expo SDK 55, React Native 0.83, and React 19.2.
 
 ```bash
 npm ci
@@ -40,4 +40,4 @@ Set your own Appwrite project ID and endpoint in `.env.local`. Public project id
 - The web app's Supabase policies and triggers are documented in `website/supabase/`.
 - Demo product prices are client-side sample data. Do not process real payments until a trusted server-side catalog and checkout flow are implemented.
 - Use test credentials and a non-production Supabase project while validating order flows.
-- The Expo mobile dependency audit currently reports 34 findings in the npm production dependency tree (27 high, 7 moderate, 0 critical). Safe lockfile updates patched some transitive packages, but remaining findings in the Expo/React Native dependency chain need a separately tested SDK/toolchain upgrade. Mobile CI reports these findings without treating the audit as clean; do not treat this as a resolved security issue.
+- The latest Expo mobile `npm audit --omit=dev` report contains 13 findings (5 high, 8 moderate, 0 critical), including findings in the Expo CLI toolchain pulled in by the Expo package. This audit result does not by itself prove every affected package ships in the production app bundle, but the dependency tree is **not clean**. The high findings include `node-forge` (no patched release is currently listed) and `zod` in the Expo CLI toolchain. Do not force a major Zod override without validating Expo CLI compatibility. Recheck the audit and complete real-device smoke tests before production use.
