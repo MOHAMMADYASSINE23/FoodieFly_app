@@ -56,9 +56,9 @@ const SignIn = () => {
         onPress={submit}
       />
       <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20, gap: 8 }}>
-        <Text style={{ fontSize: 16, color: '#gray-100' }}>Don&apos;t have an account?</Text>
+        <Text style={{ fontSize: 16, color: '#878787' }}>Don&apos;t have an account?</Text>
         <TouchableOpacity onPress={() => router.push('/sign-up')}>
-          <Text style={{ fontWeight: 'bold', color: '#primary' }}>Sign Up</Text>
+          <Text style={{ fontWeight: 'bold', color: '#FE8C00' }}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>
